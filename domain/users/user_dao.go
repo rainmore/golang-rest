@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"rainmore.com.au/rest-api/datasources/postgresql/users_db"
 	"rainmore.com.au/rest-api/domain/errors"
 )
 
@@ -12,6 +13,8 @@ var (
 )
 
 func Get(user *User) *errors.RestError {
+	users_db.Ping()
+
 	result := usersDB[user.Id]
 	if result == nil {
 		return errors.NewNotFundError(fmt.Sprintf("user %d not found", user.Id))

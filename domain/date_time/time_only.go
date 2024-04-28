@@ -6,12 +6,16 @@ import (
 	"time"
 )
 
+const (
+	apiTimeOnlyLayout = "15:04:05"
+)
+
 type TimeOnly struct {
 	T time.Time
 }
 
 func (timeOnly TimeOnly) MarshalJSON() ([]byte, error) {
-	formatted := timeOnly.T.Format("15:04:05")
+	formatted := timeOnly.T.Format(apiTimeOnlyLayout)
 	return json.Marshal(formatted)
 }
 
@@ -21,7 +25,7 @@ func (timeOnly *TimeOnly) UnmarshalJSON(bs []byte) error {
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal to a string: %w", err)
 	}
-	t, err := time.Parse("15:04:05", s)
+	t, err := time.Parse(apiTimeOnlyLayout, s)
 	if err != nil {
 		return fmt.Errorf("failed to parse time: %w", err)
 	}
