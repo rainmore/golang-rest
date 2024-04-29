@@ -20,12 +20,13 @@ func Init() {
 	// 	"go_lang_example",
 	// )
 
-	databaseSourceName := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	databaseSourceName := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s",
 		"localhost",
 		5432,
 		"go_lang_example",
 		"{change-it}",
 		"go_lang_example",
+		"example",
 	)
 
 	var err error

@@ -15,29 +15,41 @@ var (
 func Get(user *User) *errors.RestError {
 	users_db.Ping()
 
-	result := usersDB[user.Id]
-	if result == nil {
-		return errors.NewNotFundError(fmt.Sprintf("user %d not found", user.Id))
+	row := users_db.DBClient.QueryRow(
+		"SELECT * FROM users WHERE id = $1", user.Id)
+
+	if err := row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateOfBirth, &user.CreatedAt); err != nil {
+		fmt.Println(err)
+		return errors.NewInternalServerError(err.Error())
 	}
 
-	result.CopyTo(user)
 	return nil
 }
 
 func Save(user *User) *errors.RestError {
-	current := usersDB[user.Id]
-
-	if current != nil {
-		if current.Email == user.Email {
-			return errors.NewBadRequestError(fmt.Sprintf("email %s already exists", user.Email))
-		}
-		return errors.NewBadRequestError(fmt.Sprintf("user %d already exists", user.Id))
-	}
-
 	if user.CreatedAt.IsZero() {
 		user.CreatedAt = time.Now()
 	}
 
-	usersDB[user.Id] = user
-	return nil
+	var dateOfBirthStr string
+
+	if user.DateOfBirth != nil {
+		dateOfBirthStr = user.DateOfBirth.ToString()
+	}
+
+	row := users_db.DBClient.QueryRow(
+		`INSERT INTO users (first_name, last_name, email, date_of_birth, created_at)
+		VALUES($1, $2, $3, $4, $5)
+		RETURNING id`,
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		dateOfBirthStr,
+		user.CreatedAt)
+
+	if err := row.Scan(&user.Id); err != nil {
+		return errors.NewInternalServerError(err.Error())
+	}
+
+	return Get(user)
 }

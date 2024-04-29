@@ -32,3 +32,12 @@ func (timeOnly *DateOnly) UnmarshalJSON(bs []byte) error {
 	*timeOnly = DateOnly{t}
 	return nil
 }
+
+func (timeOnly *DateOnly) ToString() string {
+	return timeOnly.T.Format(apiDateOnlyLayout)
+}
+
+func (timeOnly *DateOnly) Scan(src any) error {
+	*timeOnly = DateOnly{src.(time.Time)}
+	return nil
+}
