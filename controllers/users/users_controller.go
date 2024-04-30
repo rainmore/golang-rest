@@ -53,9 +53,50 @@ func FindUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "TODO")
+	userId, userError := strconv.ParseInt(c.Param("user_id"), 10, 64)
+	if userError != nil {
+		err := errors.NewBadRequestError("invalid user id")
+		c.JSON(err.Status, err)
+	}
+
+	var user users.User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		restErr := errors.RestError{
+			Message: "Invalid json body",
+			Status:  http.StatusBadRequest,
+			Error:   err.Error(),
+		}
+
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	user.Id = userId
+	saveErr := services.UpdateUser(user)
+
+	if saveErr != nil {
+		c.JSON(saveErr.Status, saveErr)
+		return
+	}
+
+	c.JSON(http.StatusCreated, user)
 }
 
 func DeleteUser(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "TODO")
+	userId, userError := strconv.ParseInt(c.Param("user_id"), 10, 64)
+	if userError != nil {
+		err := errors.NewBadRequestError("invalid user id")
+		c.JSON(err.Status, err)
+	}
+	user, getErr := services.GetUser(userId)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+
+	if err := services.DeleteUser(*user); err != nil {
+		c.JSON(err.Status, err)
+	}
+
+	c.JSON(http.StatusAccepted, "deleted")
 }
