@@ -15,12 +15,19 @@ var (
 func Get(user *User) *errors.RestError {
 	users_db.Ping()
 
-	row := users_db.DBClient.QueryRow(
-		"SELECT * FROM users WHERE id = $1", user.Id)
+	stmt, err := users_db.DBClient.Prepare("SELECT * FROM users WHERE id = $1")
+	if err != nil {
+		fmt.Println(err)
+		return errors.NewInternalServerError(err.Error())
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(user.Id)
 
 	if err := row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateOfBirth, &user.CreatedAt); err != nil {
 		fmt.Println(err)
-		return errors.NewInternalServerError(err.Error())
+		return errors.NewError(err)
 	}
 
 	return nil
@@ -37,10 +44,19 @@ func Save(user *User) *errors.RestError {
 		dateOfBirthStr = user.DateOfBirth.ToString()
 	}
 
-	row := users_db.DBClient.QueryRow(
+	stmt, err := users_db.DBClient.Prepare(
 		`INSERT INTO users (first_name, last_name, email, date_of_birth, created_at)
 		VALUES($1, $2, $3, $4, $5)
-		RETURNING id`,
+		RETURNING id`)
+
+	defer stmt.Close()
+
+	if err != nil {
+		fmt.Println(err)
+		return errors.NewInternalServerError(err.Error())
+	}
+
+	row := stmt.QueryRow(
 		user.FirstName,
 		user.LastName,
 		user.Email,
@@ -48,7 +64,8 @@ func Save(user *User) *errors.RestError {
 		user.CreatedAt)
 
 	if err := row.Scan(&user.Id); err != nil {
-		return errors.NewInternalServerError(err.Error())
+		fmt.Println(err)
+		return errors.NewError(err)
 	}
 
 	return Get(user)
