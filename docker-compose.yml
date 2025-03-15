@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16.8-alpine3.20
+    container_name: rest-db
+    restart: always
+    ports:
+      - 127.0.0.1:5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_USER=example
+    volumes:
+      - pgdata:/var/lib/postgresql/data:rw
+
+volumes:
+  pgdata:
