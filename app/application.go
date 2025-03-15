@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"rainmore.com.au/rest-api/datasources/postgresql/users_db"
+	"github.com/rainmore/rest-api/datasources/postgresql/users_db"
 )
 
 var (

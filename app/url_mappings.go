@@ -1,8 +1,8 @@
 package app
 
 import (
-	"rainmore.com.au/rest-api/controllers/ping"
-	"rainmore.com.au/rest-api/controllers/users"
+	"github.com/rainmore/rest-api/controllers/ping"
+	"github.com/rainmore/rest-api/controllers/users"
 )
 
 func mapUrls() {

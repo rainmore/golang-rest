@@ -1,7 +1,9 @@
 package main
 
-import "rainmore.com.au/rest-api/app"
+import (
+	"github.com/rainmore/rest-api/cmd/api"
+)
 
 func main() {
-	app.StartApplication()
+	api.Start()
 }

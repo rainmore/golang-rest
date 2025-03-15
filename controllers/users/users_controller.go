@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"rainmore.com.au/rest-api/domain/errors"
-	"rainmore.com.au/rest-api/domain/users"
-	"rainmore.com.au/rest-api/services"
+	"github.com/rainmore/rest-api/domain/errors"
+	"github.com/rainmore/rest-api/domain/users"
+	"github.com/rainmore/rest-api/services"
 )
 
 func CreateUser(c *gin.Context) {

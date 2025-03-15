@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"rainmore.com.au/rest-api/datasources/postgresql/users_db"
-	"rainmore.com.au/rest-api/domain/errors"
+	"github.com/rainmore/rest-api/datasources/postgresql/users_db"
+	"github.com/rainmore/rest-api/domain/errors"
 )
 
 var (
@@ -62,8 +62,8 @@ func Save(user *User) *errors.RestError {
 
 	var dateOfBirthStr string
 
-	if user.DateOfBirth != nil {
-		dateOfBirthStr = user.DateOfBirth.ToString()
+	if !user.DateOfBirth.IsZero() {
+		dateOfBirthStr = user.DateOfBirth.String()
 	}
 
 	stmt, err := users_db.DBClient.Prepare(
@@ -100,8 +100,8 @@ func Update(user *User) *errors.RestError {
 
 	var dateOfBirthStr string
 
-	if user.DateOfBirth != nil {
-		dateOfBirthStr = user.DateOfBirth.ToString()
+	if !user.DateOfBirth.IsZero() {
+		dateOfBirthStr = user.DateOfBirth.String()
 	}
 
 	stmt, err := users_db.DBClient.Prepare(

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"rainmore.com.au/rest-api/domain/errors"
-	"rainmore.com.au/rest-api/domain/users"
+	"github.com/rainmore/rest-api/domain/errors"
+	"github.com/rainmore/rest-api/domain/users"
 )
 
 func CreateUser(user users.User) (*users.User, *errors.RestError) {
